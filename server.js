@@ -15,13 +15,13 @@ const dbUser = process.env.DB_USER
 const dbPass = process.env.DB_PASS
 
 
-const client = new MongoClient(`mongodb+srv://${dbUser}:${dbPass}@authjwt.i4skxmu.mongodb.net/?retryWrites=true&w=majority&appName=Authjwt`);
+const client = new MongoClient(`mongodb://mongo:${dbPass}@viaduct.proxy.rlwy.net:12488`);
 
 client.connect().then(() => {
     console.log('db running...')
 })
 
-const db = client.db('mypeace-api')
+const db = client.db('test')
 
 //--------------------------------PSYCHOLOGIST---------------------------------
 
@@ -203,6 +203,10 @@ function verifyJWT(req, res, next){
 }
 
 //---------------------------------SERVER--------------------------------
-app.listen(3000, () => {
+app.get('/', (req, res) => {
+    res.send('Hey this is my API running 🥳')
+  })
+
+app.listen(3333, () => {
     console.log('Server running...')
 })

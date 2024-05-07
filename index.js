@@ -8,6 +8,27 @@ app.use(express.urlencoded())
 const bcrypt = require('bcrypt')
 
 
+app.use(function (req, res, next) {
+
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
+});
+
+
+
 //----------------------------------DATABASE----------------------------------
 
 const { MongoClient } = require('mongodb');
@@ -15,13 +36,13 @@ const dbUser = process.env.DB_USER
 const dbPass = process.env.DB_PASS
 
 
-const client = new MongoClient(`mongodb://mongo:${dbPass}@viaduct.proxy.rlwy.net:12488`);
+const client = new MongoClient(`mongodb+srv://${dbUser}:${dbPass}@authjwt.i4skxmu.mongodb.net/?retryWrites=true&w=majority&appName=Authjwt`);
 
 client.connect().then(() => {
     console.log('db running...')
 })
 
-const db = client.db('test')
+const db = client.db('mypeace-api')
 
 //--------------------------------PSYCHOLOGIST---------------------------------
 
@@ -168,7 +189,7 @@ app.post('/auth/login', async (req, res) => {
 
             if(match){
                 const token = jwt.sign(JSON.stringify(psychologistInfo), process.env.SECRET );
-                res.json({ accessToken: token, type: 'psychologist', psychologistInfo });
+                res.json({ message: "user logged", accessToken: token, type: 'psychologist', psychologistInfo });
             } else {
                 res.json({ message: "Invalid Credentials" });
             }
@@ -178,7 +199,7 @@ app.post('/auth/login', async (req, res) => {
 
             if(match){
                 const token = jwt.sign(JSON.stringify(pacientInfo), process.env.SECRET);
-                res.json({ accessToken: token, type: 'pacient', pacientInfo });
+                res.json({ message: "user logged", accessToken: token, type: 'pacient', pacientInfo });
             } else {
                 res.json({ message: "Invalid Credentials" });
             }
@@ -204,7 +225,7 @@ function verifyJWT(req, res, next){
 
 //---------------------------------SERVER--------------------------------
 app.get('/', (req, res) => {
-    res.send('Hey this is my API running 🥳')
+    res.json({msg: 'Hey this is my API running 🥳'})
   })
 
 app.listen(3333, () => {
